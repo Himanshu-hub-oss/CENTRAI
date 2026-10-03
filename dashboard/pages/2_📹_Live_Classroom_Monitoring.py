@@ -21,6 +21,9 @@ st.set_page_config(page_title="Live Classroom Monitoring | Guardian AI", layout=
 st.title("📹 Module 1, 2, 3 & Demo Mode: Live Classroom Monitoring")
 st.markdown("Real-Time Privacy-Preserving Person Detection, Behaviour Indicator & Automated Risk Audit Workflow.")
 
+# Detect Cloud vs Local environment
+IS_CLOUD = os.environ.get("STREAMLIT_SHARING_MODE") is not None or os.environ.get("SERVER_PORT") is not None or os.environ.get("IS_STREAMLIT_CLOUD") is not None or not os.path.exists("C:\\")
+
 # Load AI Engine models once in cache
 @st.cache_resource
 def load_ai_engines():
@@ -47,39 +50,79 @@ st.sidebar.markdown(f"**Registered Trainees:** {selected_reg_cnt}")
 st.sidebar.markdown("---")
 
 # Source Selection
-source_option = st.radio("Select Video / Frame Source", ["Sample Classroom Image", "Upload Classroom Image / Video", "Live Webcam Feed"], horizontal=True)
+source_options = ["Demo / Sample Classroom Image", "Upload Classroom Image / Video", "Local Camera (Webcam / Feed)"]
+source_option = st.radio("Select Video / Frame Source", source_options, horizontal=True)
 
 input_image = None
-video_file = None
+frame_status_label = "NOT AVAILABLE"
+model_status_badge = "DEMO"
 
-if source_option == "Sample Classroom Image":
-    # Pick sample from local archive dataset
+if source_option == "Demo / Sample Classroom Image":
+    model_status_badge = "REAL MODEL + DEMO"
     sample_dir = r"f:\SIH 26245\archive\dataset\images"
+    if not os.path.exists(sample_dir):
+        sample_dir = os.path.join(os.path.dirname(__file__), "../../archive/dataset/images")
+    
     if os.path.exists(sample_dir):
-        sample_files = os.listdir(sample_dir)[:10]
-        chosen_file = st.selectbox("Select Sample Dataset Classroom Frame", sample_files)
-        input_image = cv2.imread(os.path.join(sample_dir, chosen_file))
+        sample_files = [f for f in os.listdir(sample_dir) if f.endswith(('.jpg', '.png', '.jpeg'))][:15]
+        if sample_files:
+            chosen_file = st.selectbox("Select Sample Dataset Classroom Frame", sample_files)
+            sample_path = os.path.join(sample_dir, chosen_file)
+            input_image = cv2.imread(sample_path)
+            if input_image is not None:
+                frame_status_label = "PROCESSED (SAMPLE IMAGE)"
     else:
-        input_image = np.zeros((480, 640, 3), dtype=np.uint8)
+        st.warning("Sample dataset directory not found locally. Please upload an image/video.")
 
 elif source_option == "Upload Classroom Image / Video":
-    uploaded_file = st.file_uploader("Upload Classroom Image or Video File", type=['jpg', 'jpeg', 'png', 'mp4', 'avi', 'mov'])
+    model_status_badge = "REAL MODEL"
+    uploaded_file = st.file_uploader("Upload Classroom Image or Video File (MP4/AVI/MOV/JPG/PNG)", type=['jpg', 'jpeg', 'png', 'mp4', 'avi', 'mov'])
+    
     if uploaded_file is not None:
-        if uploaded_file.name.endswith(('mp4', 'avi', 'mov')):
-            tfile = tempfile.NamedTemporaryFile(delete=False)
+        if uploaded_file.name.lower().endswith(('mp4', 'avi', 'mov')):
+            # Save uploaded video to temp file
+            tfile = tempfile.NamedTemporaryFile(delete=False, suffix='.mp4')
             tfile.write(uploaded_file.read())
-            video_file = tfile.name
+            tfile.close()
+            
+            cap = cv2.VideoCapture(tfile.name)
+            total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+            
+            if total_frames > 0:
+                frame_slider = st.slider("Video Timeline Frame Control (Sampled Frame)", 0, max(0, total_frames - 1), 0)
+                cap.set(cv2.CAP_PROP_POS_FRAMES, frame_slider)
+                ret, frame = cap.read()
+                if ret and frame is not None:
+                    input_image = frame
+                    frame_status_label = f"PROCESSED (VIDEO FRAME {frame_slider}/{total_frames})"
+            cap.release()
+            try:
+                os.unlink(tfile.name)
+            except Exception:
+                pass
         else:
             file_bytes = np.asarray(bytearray(uploaded_file.read()), dtype=np.uint8)
             input_image = cv2.imdecode(file_bytes, 1)
+            if input_image is not None:
+                frame_status_label = "PROCESSED (UPLOADED IMAGE)"
 
-elif source_option == "Live Webcam Feed":
-    st.info("Click below to capture live camera snapshot.")
-    camera_img = st.camera_input("Take Live Classroom Photo")
-    if camera_img is not None:
-        bytes_data = camera_img.getvalue()
-        file_bytes = np.asarray(bytearray(bytes_data), dtype=np.uint8)
-        input_image = cv2.imdecode(file_bytes, 1)
+elif source_option == "Local Camera (Webcam / Feed)":
+    model_status_badge = "LOCAL ONLY"
+    st.info("ℹ️ Local Camera mode captures frames directly from hardware webcam.")
+    
+    # Check if running in cloud environment
+    if IS_CLOUD:
+        st.warning("⚠️ **Local Camera Unavailable on Cloud Deployment**. Local hardware cameras cannot be accessed remotely from cloud servers. Please use **'Upload Classroom Image / Video'** or **'Demo / Sample Classroom Image'**.")
+    else:
+        camera_img = st.camera_input("Take Live Classroom Photo")
+        if camera_img is not None:
+            bytes_data = camera_img.getvalue()
+            file_bytes = np.asarray(bytearray(bytes_data), dtype=np.uint8)
+            input_image = cv2.imdecode(file_bytes, 1)
+            if input_image is not None:
+                frame_status_label = "PROCESSED (LIVE CAMERA)"
+
+st.markdown("---")
 
 # Execution & Display
 if input_image is not None:
@@ -87,7 +130,9 @@ if input_image is not None:
 
     with col1:
         st.subheader("🤖 AI Computer Vision Real-Time Feed")
-        
+        st.markdown(f"Status: `<span style='color: green; font-weight: bold;'>{frame_status_label}</span>` | Model Status: `<span style='background-color: #0284c7; color: white; padding: 2px 8px; border-radius: 4px; font-weight: bold;'>{model_status_badge}</span>`", unsafe_allow_html=True)
+        st.write("")
+
         # 1. Person Detection Pipeline
         annotated_person_img, detected_count, conf_pct, detections, fps = person_detector.detect(input_image)
         
@@ -156,6 +201,7 @@ if input_image is not None:
 
         if st.button("📄 Generate Live Officer PDF Inspection Report", type="primary"):
             # Save visual evidence snapshot
+            os.makedirs("evidence", exist_ok=True)
             evidence_path = os.path.join("evidence", f"Evidence_{selected_cid}_{int(np.random.randint(1000,9999))}.jpg")
             cv2.imwrite(evidence_path, annotated_person_img)
 
@@ -179,3 +225,26 @@ if input_image is not None:
             with open(pdf_out, "rb") as f:
                 st.download_button("⬇️ Download Official Inspection PDF Report", f, file_name=os.path.basename(pdf_out), mime="application/pdf")
             st.success("Official PDF Inspection Report Generated with AI Evidence Snapshot!")
+
+else:
+    # State when NO video or image source is loaded
+    st.markdown("""
+        <div style="background-color: #1e293b; color: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #334155; margin-top: 15px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h3 style="margin: 0; color: #38bdf8;">📹 Video / Camera Feed: NOT AVAILABLE</h3>
+                    <p style="color: #94a3b8; margin-top: 5px;">Please upload a classroom video (MP4/AVI/MOV), an image, or select a sample frame above to begin AI visual monitoring.</p>
+                </div>
+                <div>
+                    <span style="background-color: #334155; color: #cbd5e1; padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 0.85rem;">STATUS: WAITING FOR VIDEO</span>
+                </div>
+            </div>
+            <hr style="border-color: #334155; margin: 15px 0;">
+            <div style="display: flex; gap: 40px;">
+                <div><span style="color: #94a3b8;">AI Trainee Count:</span> <b style="color: #f1f5f9;">N/A</b></div>
+                <div><span style="color: #94a3b8;">Attendance Estimate:</span> <b style="color: #f1f5f9;">N/A</b></div>
+                <div><span style="color: #94a3b8;">Engagement Score:</span> <b style="color: #f1f5f9;">N/A</b></div>
+                <div><span style="color: #94a3b8;">Model Status:</span> <b style="color: #38bdf8;">NOT AVAILABLE</b></div>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
