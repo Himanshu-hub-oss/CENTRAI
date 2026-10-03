@@ -8,7 +8,7 @@ from ai.low_bandwidth_manager import LowBandwidthManager, CameraQualityAssessor
 
 st.set_page_config(page_title="Low Bandwidth & Camera Quality | Guardian AI", layout="wide")
 
-st.title("📡 Module 9: Low-Bandwidth Mode & Camera Quality Assessment")
+st.title(" Module 9: Low-Bandwidth Mode & Camera Quality Assessment")
 st.markdown("Rural & Semi-Urban Deployment Constraints Management.")
 
 st.sidebar.markdown("### Deployment Settings")
@@ -30,7 +30,7 @@ c3.metric("Frames Skipped", f"{stats['frames_skipped']}")
 c4.metric("Est Data Reduction", f"{stats['skip_percentage']}% (~{stats['est_data_saved_mb']} MB)")
 
 st.markdown("---")
-st.subheader("📷 Camera Quality Diagnostics")
+st.subheader(" Camera Quality Diagnostics")
 
 sample_img_path = r"f:\SIH 26245\archive\dataset\images\1-second-scene_mp4-0000_jpg.rf.FEE3uKUksPQqBY0UDCWZ.jpg"
 if os.path.exists(sample_img_path):
@@ -49,4 +49,4 @@ if os.path.exists(sample_img_path):
         for r in reasons:
             st.write(f"- {r}")
 
-st.caption("ℹ️ *Data reduction numbers reflect architecture-level estimated savings calculated from frame sampling and downsampling.*")
+st.caption(" *Data reduction numbers reflect architecture-level estimated savings calculated from frame sampling and downsampling.*")
