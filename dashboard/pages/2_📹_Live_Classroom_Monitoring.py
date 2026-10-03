@@ -90,7 +90,7 @@ if source_option == "Demo Dataset (Bundled Classroom Footage)":
         dataset_available = False
 
     if not dataset_available:
-        st.error("❌ **Demo dataset unavailable**. No bundled demo images found in `data/demo_classroom/`. Please use 'Upload Classroom Image / Video'.")
+        st.error(" **Demo dataset unavailable**. No bundled demo images found in `data/demo_classroom/`. Please use 'Upload Classroom Image / Video'.")
 
 elif source_option == "Upload Classroom Image / Video":
     model_status_badge = "REAL MODEL"
@@ -125,10 +125,10 @@ elif source_option == "Upload Classroom Image / Video":
 
 elif source_option == "Local Camera (Webcam / Feed)":
     model_status_badge = "LOCAL ONLY"
-    st.info("ℹ️ Local Camera mode captures frames directly from hardware webcam.")
+    st.info(" Local Camera mode captures frames directly from hardware webcam.")
     
     if IS_CLOUD:
-        st.warning("⚠️ **Local Camera Unavailable on Cloud Deployment**. Local hardware cameras cannot be accessed remotely from cloud servers. Please use **'Demo Dataset (Bundled Classroom Footage)'** or **'Upload Classroom Image / Video'**.")
+        st.warning(" **Local Camera Unavailable on Cloud Deployment**. Local hardware cameras cannot be accessed remotely from cloud servers. Please use **'Demo Dataset (Bundled Classroom Footage)'** or **'Upload Classroom Image / Video'**.")
     else:
         camera_img = st.camera_input("Take Live Classroom Photo")
         if camera_img is not None:
@@ -160,14 +160,14 @@ if input_image is not None:
         
         with v_tab1:
             st.image(cv2.cvtColor(annotated_person_img, cv2.COLOR_BGR2RGB), use_column_width=True)
-            st.caption("🔒 *Privacy-Preserving Bounding Box Detection. Zero face recognition or biometric storage.*")
+            st.caption(" *Privacy-Preserving Bounding Box Detection. Zero face recognition or biometric storage.*")
             
         with v_tab2:
             st.image(cv2.cvtColor(annotated_behaviour_img, cv2.COLOR_BGR2RGB), use_column_width=True)
-            st.caption("🧠 *Classroom Engagement Indicator: Multi-class action bounding box detection.*")
+            st.caption(" *Classroom Engagement Indicator: Multi-class action bounding box detection.*")
 
     with col2:
-        st.subheader("📊 Live AI Analytical Decision Support")
+        st.subheader(" Live AI Analytical Decision Support")
         
         # Attendance Estimation Formula
         estimated_att_pct = round((detected_count / selected_reg_cnt) * 100, 1) if selected_reg_cnt > 0 else 0.0
@@ -196,7 +196,7 @@ if input_image is not None:
         is_anom, anom_score, anom_reason = anomaly_detector.detect_anomaly(estimated_att_pct, selected_reg_cnt, historical_7d_avg=88.0)
         
         st.markdown("---")
-        st.subheader("⚠️ Module 4: Anomaly Detection Engine")
+        st.subheader(" Module 4: Anomaly Detection Engine")
         if is_anom:
             st.error(f"**ANOMALY DETECTED (Score: {anom_score})**\n\n{anom_reason}")
         else:
@@ -212,10 +212,10 @@ if input_image is not None:
         )
 
         st.markdown("---")
-        st.subheader("🎯 Module 6 & 11: End-to-End Live Audit & Report")
+        st.subheader(" Module 6 & 11: End-to-End Live Audit & Report")
         st.markdown(f"Calculated Centre Risk Level: **:{'red' if risk_lvl=='HIGH RISK' else 'green'}[{risk_lvl}]** (Score: {risk_score})")
 
-        if st.button("📄 Generate Live Officer PDF Inspection Report", type="primary"):
+        if st.button(" Generate Live Officer PDF Inspection Report", type="primary"):
             os.makedirs("evidence", exist_ok=True)
             evidence_path = os.path.join("evidence", f"Evidence_{selected_cid}_{int(np.random.randint(1000,9999))}.jpg")
             cv2.imwrite(evidence_path, annotated_person_img)
@@ -238,7 +238,7 @@ if input_image is not None:
             pdf_out = report_generator.generate_pdf(centre_dict, [], alert_dict, evidence_img_path=evidence_path)
             
             with open(pdf_out, "rb") as f:
-                st.download_button("⬇️ Download Official Inspection PDF Report", f, file_name=os.path.basename(pdf_out), mime="application/pdf")
+                st.download_button(" Download Official Inspection PDF Report", f, file_name=os.path.basename(pdf_out), mime="application/pdf")
             st.success("Official PDF Inspection Report Generated with AI Evidence Snapshot!")
 
 else:
