@@ -24,7 +24,7 @@ cid = selected_c_str.split(" - ")[0]
 st.subheader(f"Sanctioned Equipment Inventory — `{cid}`")
 
 # Run Infrastructure Detector
-# sample_img = r"f:\SIH 26245\archive\dataset\images\1-second-scene_mp4-0000_jpg.rf.FEE3uKUksPQqBY0UDCWZ.jpg"
+sample_img = r"f:\SIH 26245\archive\dataset\images\1-second-scene_mp4-0000_jpg.rf.FEE3uKUksPQqBY0UDCWZ.jpg"
 detector = InfrastructureDetector()
 
 if os.path.exists(sample_img):
