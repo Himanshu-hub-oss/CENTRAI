@@ -21,7 +21,7 @@ from ai.model_evaluator import ModelEvaluator
 # ---------------------------------------------------------
 st.set_page_config(
     page_title="Model Evaluation | CENTRAI",
-    page_icon="📈",
+    # page_icon="📈",
     layout="wide"
 )
 
@@ -77,7 +77,7 @@ def metric_label(value):
 # ---------------------------------------------------------
 # Header
 # ---------------------------------------------------------
-st.title("📈 Model Evaluation & Accuracy Assessment")
+st.title(" Model Evaluation & Accuracy Assessment")
 
 st.markdown(
     """
@@ -133,7 +133,7 @@ if not isinstance(results, dict):
 # ---------------------------------------------------------
 # Debug / Evaluation Summary
 # ---------------------------------------------------------
-with st.expander("🔍 Evaluation Result Structure"):
+with st.expander(" Evaluation Result Structure"):
 
     st.write("Available result keys:")
 
@@ -254,7 +254,7 @@ if missing_metrics:
 # ---------------------------------------------------------
 st.markdown("---")
 
-st.subheader("🎯 Class-Wise Precision, Recall & F1 Breakdown")
+st.subheader(" Class-Wise Precision, Recall & F1 Breakdown")
 
 
 if class_metrics is not None:
@@ -317,7 +317,7 @@ else:
 # ---------------------------------------------------------
 st.markdown("---")
 
-st.subheader("🤖 Model Status & Capabilities Registry")
+st.subheader(" Model Status & Capabilities Registry")
 
 st.caption(
     "Only documented/implemented capabilities are listed below. "
@@ -373,7 +373,7 @@ st.dataframe(
 # ---------------------------------------------------------
 st.markdown("---")
 
-st.subheader("📋 Evaluation Interpretation")
+st.subheader(" Evaluation Interpretation")
 
 st.markdown(
     """
