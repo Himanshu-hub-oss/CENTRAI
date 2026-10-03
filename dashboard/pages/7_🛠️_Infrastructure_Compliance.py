@@ -11,7 +11,7 @@ from ai.infra_detector import InfrastructureDetector
 
 st.set_page_config(page_title="Infrastructure Compliance | Guardian AI", layout="wide")
 
-st.title("🛠️ Module 5: Infrastructure & Equipment Compliance Inventory")
+st.title(" Module 5: Infrastructure & Equipment Compliance Inventory")
 st.markdown("Automated Inventory Verification & Apparent Operability Assessment.")
 
 conn = get_db_connection()
@@ -32,11 +32,11 @@ if os.path.exists(sample_img):
     
     col_img, col_rep = st.columns([1.2, 1.0])
     with col_img:
-        st.subheader("📷 Computer Vision Equipment Bounding Box Feed")
+        st.subheader(" Computer Vision Equipment Bounding Box Feed")
         st.image(annotated_frame, channels="BGR", use_column_width=True)
     
     with col_rep:
-        st.subheader(f"📊 Compliance Score: `{score}%`")
+        st.subheader(f" Compliance Score: `{score}%`")
         rep_df = pd.DataFrame(report)
         st.dataframe(
             rep_df[['item_name', 'expected_qty', 'detected_qty', 'status', 'presence_label', 'operability_status']],
@@ -52,6 +52,6 @@ if os.path.exists(sample_img):
             use_container_width=True
         )
 
-st.info("ℹ️ **Compliance Rule**: Equipment operability is strictly labeled *'Operability not verifiable from current footage'* unless physical sensor verification is available.")
+st.info(" **Compliance Rule**: Equipment operability is strictly labeled *'Operability not verifiable from current footage'* unless physical sensor verification is available.")
 
 conn.close()
