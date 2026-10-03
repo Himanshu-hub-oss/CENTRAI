@@ -53,7 +53,7 @@ df_alerts = pd.read_sql_query("SELECT * FROM alerts", conn)
 conn.close()
 
 # Sidebar Filters
-st.sidebar.image("https://img.icons8.com/color/96/000000/shield.png", width=64)
+# st.sidebar.image("https://img.icons8.com/color/96/000000/shield.png", width=64)
 st.sidebar.title("Guardian Navigation")
 st.sidebar.markdown("---")
 
@@ -96,7 +96,7 @@ st.markdown("---")
 col_left, col_right = st.columns([1.2, 1.0])
 
 with col_left:
-    st.subheader("📍 State & District Risk Distribution")
+    st.subheader(" State & District Risk Distribution")
     fig_bar = px.bar(
         filtered_df,
         x="district",
