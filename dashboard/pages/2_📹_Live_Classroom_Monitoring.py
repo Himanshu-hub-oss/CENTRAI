@@ -18,7 +18,7 @@ from backend.report_generator import InspectionReportGenerator
 
 st.set_page_config(page_title="Live Classroom Monitoring | Guardian AI", layout="wide")
 
-st.title("📹 Module 1, 2, 3 & Demo Mode: Live Classroom Monitoring")
+st.title(" Module 1, 2, 3 & Demo Mode: Live Classroom Monitoring")
 st.markdown("Real-Time Privacy-Preserving Person Detection, Behaviour Indicator & Automated Risk Audit Workflow.")
 
 # Detect Cloud vs Local environment
@@ -145,7 +145,7 @@ if input_image is not None:
     col1, col2 = st.columns([1.3, 1.0])
 
     with col1:
-        st.subheader("🤖 AI Computer Vision Real-Time Feed")
+        st.subheader(" AI Computer Vision Real-Time Feed")
         st.markdown(f"Status: `<span style='color: green; font-weight: bold;'>{frame_status_label}</span>` | Model Status: `<span style='background-color: #0284c7; color: white; padding: 2px 8px; border-radius: 4px; font-weight: bold;'>{model_status_badge}</span>`", unsafe_allow_html=True)
         st.write("")
 
