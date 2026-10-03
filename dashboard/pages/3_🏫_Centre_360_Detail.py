@@ -11,7 +11,7 @@ from backend.database import get_db_connection
 
 st.set_page_config(page_title="Centre 360 Profile | Guardian AI", layout="wide")
 
-st.title("🏫 Module 10: Centre 360-Degree Comprehensive Profile")
+st.title(" Module 10: Centre 360-Degree Comprehensive Profile")
 
 conn = get_db_connection()
 centres_df = pd.read_sql_query("SELECT * FROM training_centres", conn)
@@ -53,14 +53,14 @@ t1, t2, t3, t4 = st.tabs(["Overview & Trends", "Infrastructure Compliance Checkl
 with t1:
     col_a, col_b = st.columns(2)
     with col_a:
-        st.subheader("📈 14-Day Attendance Trend")
+        st.subheader(" 14-Day Attendance Trend")
         if not att_history_df.empty:
             fig_line = px.line(att_history_df, x="date", y="attendance_pct", markers=True, title="Daily Attendance Occupancy %")
             fig_line.add_hline(y=75, line_dash="dash", line_color="orange", annotation_text="Target 75%")
             fig_line.add_hline(y=50, line_dash="dash", line_color="red", annotation_text="Critical 50%")
             st.plotly_chart(fig_line, use_container_width=True)
     with col_b:
-        st.subheader("🎯 Sub-Module Performance Scores")
+        st.subheader(" Sub-Module Performance Scores")
         score_df = pd.DataFrame([
             {"Metric": "AI Attendance %", "Score": centre_row['attendance_pct']},
             {"Metric": "Infra Compliance %", "Score": centre_row['infra_compliance_pct']},
@@ -70,7 +70,7 @@ with t1:
         st.plotly_chart(fig_bar, use_container_width=True)
 
 with t2:
-    st.subheader("📋 Module 5: Infrastructure & Safety Compliance Checklist")
+    st.subheader(" Module 5: Infrastructure & Safety Compliance Checklist")
     st.markdown("Explicit Dual Labeling: **AI Detected** vs **Officer Verified**")
     st.dataframe(
         comp_df[['item_name', 'category', 'ai_detected_status', 'officer_verified_status', 'remarks']],
@@ -79,7 +79,7 @@ with t2:
     )
 
 with t3:
-    st.subheader("🚨 Module 7 & 8: AI Alerts & Evidence Snapshots")
+    st.subheader(" Module 7 & 8: AI Alerts & Evidence Snapshots")
     if not alerts_df.empty:
         st.dataframe(
             alerts_df[['alert_id', 'timestamp', 'alert_type', 'severity', 'ai_confidence', 'reason', 'status']],
@@ -90,6 +90,6 @@ with t3:
         st.info("No active alerts logged for this centre.")
 
 with t4:
-    st.subheader("🗓️ Inspection History")
+    st.subheader(" Inspection History")
     st.write(f"**Last Inspection Date:** {centre_row['last_inspection_date']}")
     st.write(f"**Operational Status:** Active Monitored")
