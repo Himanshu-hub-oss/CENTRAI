@@ -15,7 +15,7 @@ from dashboard.components import apply_custom_css, render_metric_card
 
 st.set_page_config(
     page_title="SkillCentre Guardian AI",
-    page_icon="🛡️",
+    # page_icon="🛡️",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -24,7 +24,7 @@ apply_custom_css()
 seed_database_with_data()
 
 # Header & Government Tagline
-st.markdown('<div class="header-title">🛡️ SkillCentre Guardian AI</div>', unsafe_allow_html=True)
+st.markdown('<div class="header-title"> SkillCentre Guardian AI</div>', unsafe_allow_html=True)
 st.markdown('<div class="header-subtitle">Government of India | Ministry of Skill Development & Entrepreneurship — AI Decision-Support Platform</div>', unsafe_allow_html=True)
 
 st.markdown('<span class="flag-label">Prototype / Synthetic Operational Data</span>', unsafe_allow_html=True)
@@ -68,7 +68,7 @@ if selected_district != "All Districts":
     filtered_df = filtered_df[filtered_df['district'] == selected_district]
 
 st.sidebar.markdown("---")
-st.sidebar.info("💡 **SIH 2026 Problem SIH26245**: Real-time AI monitoring for skill training centres, privacy-preserving attendance, behaviour indicator & transparent risk engine.")
+st.sidebar.info(" **SIH 2026 Problem SIH26245**: Real-time AI monitoring for skill training centres, privacy-preserving attendance, behaviour indicator & transparent risk engine.")
 
 # Top Metrics Row
 c1, c2, c3, c4, c5 = st.columns(5)
@@ -111,7 +111,7 @@ with col_left:
     st.plotly_chart(fig_bar, use_container_width=True)
 
 with col_right:
-    st.subheader("📊 Operational Risk Categorization")
+    st.subheader(" Operational Risk Categorization")
     risk_counts = filtered_df['risk_level'].value_counts().reset_index()
     risk_counts.columns = ['risk_level', 'count']
     fig_pie = px.pie(
@@ -129,7 +129,7 @@ with col_right:
 st.markdown("---")
 
 # High-Risk Centres Priority Watchlist Table
-st.subheader("⚠️ Priority Action Required: High & Medium Risk Centres")
+st.subheader(" Priority Action Required: High & Medium Risk Centres")
 risk_table_df = filtered_df[filtered_df['risk_level'].isin(['HIGH RISK', 'MEDIUM RISK'])][
     ['centre_id', 'centre_name', 'state', 'district', 'attendance_pct', 'infra_compliance_pct', 'engagement_score', 'risk_score', 'risk_level', 'open_alerts']
 ].sort_values(by="risk_score", ascending=False)
