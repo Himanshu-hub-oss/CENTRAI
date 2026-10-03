@@ -9,7 +9,7 @@ from backend.database import get_db_connection
 
 st.set_page_config(page_title="AI Alerts & Evidence | Guardian AI", layout="wide")
 
-st.title("⚠️ Module 7 & 8: Evidence-Backed Alert Verification Workflow")
+st.title(" Module 7 & 8: Evidence-Backed Alert Verification Workflow")
 st.markdown("Inspect AI Triggered Anomaly Alerts, Review Visual Evidence Snapshots & Verify Officer Status.")
 
 conn = get_db_connection()
@@ -21,7 +21,7 @@ else:
     col_sel, col_detail = st.columns([1.0, 1.3])
 
     with col_sel:
-        st.subheader("🚨 Active AI Alerts Queue")
+        st.subheader(" Active AI Alerts Queue")
         st.dataframe(
             alerts_df[['alert_id', 'centre_id', 'alert_type', 'severity', 'status']],
             hide_index=True,
@@ -31,7 +31,7 @@ else:
         selected_alert_id = st.selectbox("Select Alert ID to Inspect", alerts_df['alert_id'].tolist())
 
     with col_detail:
-        st.subheader(f"🔍 Detailed Evidence: {selected_alert_id}")
+        st.subheader(f" Detailed Evidence: {selected_alert_id}")
         alert_row = alerts_df[alerts_df['alert_id'] == selected_alert_id].iloc[0]
 
         st.markdown(f"""
@@ -45,17 +45,17 @@ else:
             </div>
         """, unsafe_allow_html=True)
 
-        st.markdown("#### 📸 Captured Visual Evidence")
+        st.markdown("####  Captured Visual Evidence")
         sample_ev = r"f:\SIH 26245\archive\dataset\images\1-second-scene_mp4-0000_jpg.rf.FEE3uKUksPQqBY0UDCWZ.jpg"
         if os.path.exists(sample_ev):
             st.image(sample_ev, caption=f"Evidence Snapshot for {selected_alert_id} (Bounding Boxes & Count Verified)", use_column_width=True)
 
-        st.markdown("#### 👮 Officer Action & Verification Workflow")
+        st.markdown("####  Officer Action & Verification Workflow")
         current_status = alert_row['status']
         new_status = st.selectbox("Update Status", ["Open", "Under Review", "Verified", "Resolved", "Rejected"], index=["Open", "Under Review", "Verified", "Resolved", "Rejected"].index(current_status))
         officer_remark = st.text_area("Officer Inspection Remarks", "Verified by District Officer during audit.")
 
-        if st.button("💾 Save Officer Verification Status", type="primary"):
+        if st.button(" Save Officer Verification Status", type="primary"):
             cursor = conn.cursor()
             cursor.execute("UPDATE alerts SET status = ? WHERE alert_id = ?", (new_status, selected_alert_id))
             conn.commit()
