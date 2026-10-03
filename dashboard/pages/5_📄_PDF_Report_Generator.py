@@ -10,7 +10,7 @@ from backend.report_generator import InspectionReportGenerator
 
 st.set_page_config(page_title="PDF Report Generator | Guardian AI", layout="wide")
 
-st.title("📄 Module 11: Official PDF Inspection Report Generator")
+st.title(" Module 11: Official PDF Inspection Report Generator")
 st.markdown("Generate and Download Formal Government Audit Reports in One Click.")
 
 conn = get_db_connection()
@@ -26,7 +26,7 @@ conn.close()
 
 officer_remarks = st.text_area("Inspecting Officer Field Remarks", "Centre inspection completed. AI occupancy estimates verified against physical attendance register.")
 
-if st.button("🚀 Generate PDF Inspection Report", type="primary"):
+if st.button(" Generate PDF Inspection Report", type="primary"):
     generator = InspectionReportGenerator()
     pdf_path = generator.generate_pdf(
         centre_data=centre_row,
@@ -36,5 +36,5 @@ if st.button("🚀 Generate PDF Inspection Report", type="primary"):
     )
     
     with open(pdf_path, "rb") as f:
-        st.download_button("⬇️ Download Official PDF Report", f, file_name=os.path.basename(pdf_path), mime="application/pdf")
+        st.download_button(" Download Official PDF Report", f, file_name=os.path.basename(pdf_path), mime="application/pdf")
     st.success(f"Report generated successfully: `{os.path.basename(pdf_path)}`")
