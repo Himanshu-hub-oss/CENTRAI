@@ -49,30 +49,48 @@ selected_reg_cnt = int(centres_df[centres_df['centre_id'] == selected_cid]['regi
 st.sidebar.markdown(f"**Registered Trainees:** {selected_reg_cnt}")
 st.sidebar.markdown("---")
 
-# Source Selection
-source_options = ["Demo / Sample Classroom Image", "Upload Classroom Image / Video", "Local Camera (Webcam / Feed)"]
-source_option = st.radio("Select Video / Frame Source", source_options, horizontal=True)
+# Source Selection - Demo Dataset is default option (1)
+source_options = ["Demo Dataset (Bundled Classroom Footage)", "Upload Classroom Image / Video", "Local Camera (Webcam / Feed)"]
+source_option = st.radio("Select Video / Frame Source", source_options, index=0, horizontal=True)
 
 input_image = None
 frame_status_label = "NOT AVAILABLE"
 model_status_badge = "DEMO"
+dataset_available = True
 
-if source_option == "Demo / Sample Classroom Image":
+if source_option == "Demo Dataset (Bundled Classroom Footage)":
     model_status_badge = "REAL MODEL + DEMO"
-    sample_dir = r"f:\SIH 26245\archive\dataset\images"
-    if not os.path.exists(sample_dir):
-        sample_dir = os.path.join(os.path.dirname(__file__), "../../archive/dataset/images")
     
-    if os.path.exists(sample_dir):
-        sample_files = [f for f in os.listdir(sample_dir) if f.endswith(('.jpg', '.png', '.jpeg'))][:15]
+    # Use relative paths for Streamlit Cloud compatibility
+    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+    demo_dirs = [
+        os.path.join(root_dir, "data", "demo_classroom"),
+        os.path.join(root_dir, "archive", "dataset", "images"),
+        r"f:\SIH 26245\data\demo_classroom",
+        r"f:\SIH 26245\archive\dataset\images"
+    ]
+    
+    sample_dir = None
+    for d in demo_dirs:
+        if os.path.exists(d) and len(os.listdir(d)) > 0:
+            sample_dir = d
+            break
+
+    if sample_dir and os.path.exists(sample_dir):
+        sample_files = [f for f in os.listdir(sample_dir) if f.lower().endswith(('.jpg', '.png', '.jpeg'))]
         if sample_files:
-            chosen_file = st.selectbox("Select Sample Dataset Classroom Frame", sample_files)
+            chosen_file = st.selectbox("Select Demo Dataset Classroom Frame", sample_files)
             sample_path = os.path.join(sample_dir, chosen_file)
             input_image = cv2.imread(sample_path)
             if input_image is not None:
-                frame_status_label = "PROCESSED (SAMPLE IMAGE)"
+                frame_status_label = f"PROCESSED (DEMO DATASET: {chosen_file})"
+        else:
+            dataset_available = False
     else:
-        st.warning("Sample dataset directory not found locally. Please upload an image/video.")
+        dataset_available = False
+
+    if not dataset_available:
+        st.error("❌ **Demo dataset unavailable**. No bundled demo images found in `data/demo_classroom/`. Please use 'Upload Classroom Image / Video'.")
 
 elif source_option == "Upload Classroom Image / Video":
     model_status_badge = "REAL MODEL"
@@ -80,7 +98,6 @@ elif source_option == "Upload Classroom Image / Video":
     
     if uploaded_file is not None:
         if uploaded_file.name.lower().endswith(('mp4', 'avi', 'mov')):
-            # Save uploaded video to temp file
             tfile = tempfile.NamedTemporaryFile(delete=False, suffix='.mp4')
             tfile.write(uploaded_file.read())
             tfile.close()
@@ -94,7 +111,7 @@ elif source_option == "Upload Classroom Image / Video":
                 ret, frame = cap.read()
                 if ret and frame is not None:
                     input_image = frame
-                    frame_status_label = f"PROCESSED (VIDEO FRAME {frame_slider}/{total_frames})"
+                    frame_status_label = f"PROCESSED (UPLOADED VIDEO FRAME {frame_slider}/{total_frames})"
             cap.release()
             try:
                 os.unlink(tfile.name)
@@ -110,9 +127,8 @@ elif source_option == "Local Camera (Webcam / Feed)":
     model_status_badge = "LOCAL ONLY"
     st.info("ℹ️ Local Camera mode captures frames directly from hardware webcam.")
     
-    # Check if running in cloud environment
     if IS_CLOUD:
-        st.warning("⚠️ **Local Camera Unavailable on Cloud Deployment**. Local hardware cameras cannot be accessed remotely from cloud servers. Please use **'Upload Classroom Image / Video'** or **'Demo / Sample Classroom Image'**.")
+        st.warning("⚠️ **Local Camera Unavailable on Cloud Deployment**. Local hardware cameras cannot be accessed remotely from cloud servers. Please use **'Demo Dataset (Bundled Classroom Footage)'** or **'Upload Classroom Image / Video'**.")
     else:
         camera_img = st.camera_input("Take Live Classroom Photo")
         if camera_img is not None:
@@ -200,7 +216,6 @@ if input_image is not None:
         st.markdown(f"Calculated Centre Risk Level: **:{'red' if risk_lvl=='HIGH RISK' else 'green'}[{risk_lvl}]** (Score: {risk_score})")
 
         if st.button("📄 Generate Live Officer PDF Inspection Report", type="primary"):
-            # Save visual evidence snapshot
             os.makedirs("evidence", exist_ok=True)
             evidence_path = os.path.join("evidence", f"Evidence_{selected_cid}_{int(np.random.randint(1000,9999))}.jpg")
             cv2.imwrite(evidence_path, annotated_person_img)
@@ -228,12 +243,13 @@ if input_image is not None:
 
 else:
     # State when NO video or image source is loaded
-    st.markdown("""
+    status_msg = "Demo dataset unavailable" if not dataset_available else "Please upload a classroom video (MP4/AVI/MOV), an image, or select a demo dataset frame above."
+    st.markdown(f"""
         <div style="background-color: #1e293b; color: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #334155; margin-top: 15px;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <div>
                     <h3 style="margin: 0; color: #38bdf8;">📹 Video / Camera Feed: NOT AVAILABLE</h3>
-                    <p style="color: #94a3b8; margin-top: 5px;">Please upload a classroom video (MP4/AVI/MOV), an image, or select a sample frame above to begin AI visual monitoring.</p>
+                    <p style="color: #94a3b8; margin-top: 5px;">{status_msg}</p>
                 </div>
                 <div>
                     <span style="background-color: #334155; color: #cbd5e1; padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 0.85rem;">STATUS: WAITING FOR VIDEO</span>

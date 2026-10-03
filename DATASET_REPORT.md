@@ -5,6 +5,17 @@ This report documents the local dataset discovery, structural inspection, module
 
 ---
 
+## Bundled Demo Dataset Attribution
+
+A small subset of **10 images** from the **Classroom Student Engagement Dataset** (Roboflow workspace: *ghulams-workspace*, licensed as **Private / Prototype Use**) has been copied to `data/demo_classroom/` to enable the Live Classroom Monitoring demo to function in cloud deployments where the full local dataset (`archive/dataset/images/`) is not accessible.
+
+**Source**: `f:\SIH 26245\archive\dataset\images` → copied to `data/demo_classroom/`  
+**Purpose**: Prototype demonstration only — SIH 2026 Hackathon  
+**Modification**: No images modified; used as-is for inference demonstration  
+**Not for redistribution**; original dataset license applies.
+
+---
+
 ## 1. Local Dataset Inventory & Inspection
 
 ### Dataset 1: Classroom Student Engagement Dataset (YOLO Format)
