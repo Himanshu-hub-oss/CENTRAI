@@ -1,0 +1,23 @@
+﻿# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+
+# Secrets
+.env
+.streamlit/secrets.toml
+
+# Datasets
+2018-2019_Daily_Attendance_20240429.csv/
+archive/
+
+# Generated/cache files
+*.log
+
+# Runtime database
+backend/*.db
+
+# Generated reports
+reports/*.pdf
