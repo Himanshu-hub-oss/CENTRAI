@@ -11,7 +11,7 @@ from ai.discrepancy_engine import AttendanceDiscrepancyEngine
 
 st.set_page_config(page_title="Attendance Discrepancy Engine | Guardian AI", layout="wide")
 
-st.title("⚖️ Module 3 & Discrepancy Engine: Attendance Cross-Check")
+st.title(" Module 3 & Discrepancy Engine: Attendance Cross-Check")
 st.markdown("Cross-check AI-Estimated Physical Attendance against Centre Submitted Attendance Registers.")
 
 conn = get_db_connection()
@@ -39,7 +39,7 @@ engine = AttendanceDiscrepancyEngine()
 disc_pct, diff, severity, reason, payload = engine.evaluate_discrepancy(cid, camera_id, submitted_att, ai_detected_att)
 
 st.markdown("---")
-st.subheader("📊 Discrepancy Analysis Results")
+st.subheader(" Discrepancy Analysis Results")
 
 m1, m2, m3, m4 = st.columns(4)
 m1.metric("Submitted Register Count", f"{submitted_att}")
@@ -48,14 +48,14 @@ m3.metric("Headcount Difference", f"{diff}", delta_color="inverse")
 m4.metric("Discrepancy %", f"{disc_pct}%", delta=f"{severity}", delta_color="inverse")
 
 if severity == "CRITICAL":
-    st.error(f"🚨 **CRITICAL DISCREPANCY FLAG**: {reason}")
+    st.error(f" **CRITICAL DISCREPANCY FLAG**: {reason}")
 elif severity == "WARNING":
-    st.warning(f"⚠️ **WARNING DISCREPANCY FLAG**: {reason}")
+    st.warning(f" **WARNING DISCREPANCY FLAG**: {reason}")
 else:
-    st.success(f"✅ **NORMAL**: {reason}")
+    st.success(f" **NORMAL**: {reason}")
 
 st.markdown("---")
-st.subheader("📜 Recent Discrepancy Log History")
+st.subheader(" Recent Discrepancy Log History")
 history_df = pd.DataFrame([
     {"Timestamp": "2026-10-02 09:15:00", "Submitted": 32, "AI Count": 24, "Diff": 8, "Discrepancy %": "25.0%", "Severity": "CRITICAL", "Status": "Open"},
     {"Timestamp": "2026-10-01 14:30:00", "Submitted": 30, "AI Count": 28, "Diff": 2, "Discrepancy %": "6.7%", "Severity": "NORMAL", "Status": "Verified"},
